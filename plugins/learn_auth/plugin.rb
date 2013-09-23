@@ -20,14 +20,15 @@ class LearnAuthenticator < ::Auth::OAuth2Authenticator
 
   def register_middleware(omniauth)
     omniauth.provider :learn,
-      ENV['LEARN_OAUTH_CLIENT_ID_PRODUCTION'],
-      ENV['LEARN_OAUTH_CLIENT_SECRET_PRODUCTION']
+      ENV['MEMBERSHIP_OAUTH_CLIENT_ID_PRODUCTION'],
+      ENV['MEMBERSHIP_OAUTH_CLIENT_SECRET_PRODUCTION']
   end
 
   private
 
   def populate_result_with_auth_info(result, auth_token)
-    result.name = "#{auth_token[:info][:first_name]} #{auth_token[:info][:last_name]}"
+    puts "TOKEN: #{auth_token.inspect}"
+    result.name = auth_token[:info][:name]
     result.extra_data[:has_active_subscription] = auth_token[:info][:has_active_subscription]
     result.extra_data[:admin] = auth_token[:info][:admin]
   end
@@ -35,7 +36,7 @@ class LearnAuthenticator < ::Auth::OAuth2Authenticator
   def set_permissions(user, permissions)
     if user && user.persisted?
       set_admin_permission(user, permissions[:admin])
-      set_subscription_permissions(user, permissions[:has_active_subscription])
+      #set_subscription_permissions(user, permissions[:has_active_subscription])
     end
   end
 
@@ -70,7 +71,7 @@ end
 require 'omniauth-oauth2'
 
 class OmniAuth::Strategies::Learn < OmniAuth::Strategies::OAuth2
-  LEARN_URL = ENV['LEARN_URL']
+  LEARN_URL = ENV['LEARN_URL'] || 'http://localhost:3000'
 
   option :name, :learn
 
@@ -91,8 +92,8 @@ class OmniAuth::Strategies::Learn < OmniAuth::Strategies::OAuth2
   end
 end
 
-auth_provider :title => 'with Learn',
-    :message => 'Log in via Learn',
+auth_provider :title => 'Log in with your Account',
+    :message => 'Log in with your Account',
     :frame_width => 920,
     :frame_height => 800,
     :authenticator => LearnAuthenticator.new('learn', trusted: true)
