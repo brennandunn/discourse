@@ -20,7 +20,7 @@ dump.rdb
 /cache
 /coverage/*
 
-/public/assets/*
+#/public/assets/*
 
 config/database.yml
 #config/redis.yml
