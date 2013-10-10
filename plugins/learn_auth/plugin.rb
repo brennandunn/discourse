@@ -31,12 +31,27 @@ class LearnAuthenticator < ::Auth::OAuth2Authenticator
     result.name = auth_token[:info][:name]
     result.extra_data[:has_active_subscription] = auth_token[:info][:has_active_subscription]
     result.extra_data[:admin] = auth_token[:info][:admin]
+    result.extra_data[:cohort] = auth_token[:info][:cohort]
   end
 
   def set_permissions(user, permissions)
     if user && user.persisted?
       set_admin_permission(user, permissions[:admin])
+      # DISABLE IF SUBSCRIPTION INVALID
+
+      # SYNC WITH COHORT
+      add_to_cohort(user, permissions[:cohort])
+
       #set_subscription_permissions(user, permissions[:has_active_subscription])
+    end
+  end
+
+  def add_to_cohort(user, cohort)
+    if cohort.present?
+      group = Group.lookup_group(cohort)
+      if group and group.group_users.where(user_id: user.id).blank?
+        group.add(user)
+      end
     end
   end
 
