@@ -267,6 +267,8 @@ Discourse::Application.routes.draw do
 
   get 'robots.txt' => 'robots_txt#index'
 
+  get 'your_account', to: redirect((ENV['LEARN_URL'] || 'http://localhost:3000') + '/users/edit')
+
   [:latest, :hot, :unread, :new, :favorited, :read, :posted].each do |filter|
     root to: "list##{filter}", constraints: HomePageConstraint.new("#{filter}"), :as => "list_#{filter}"
   end
