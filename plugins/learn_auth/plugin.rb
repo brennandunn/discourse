@@ -42,7 +42,7 @@ class LearnAuthenticator < ::Auth::OAuth2Authenticator
       # SYNC WITH COHORT
       permissions[:cohort].split(',').each do |cohort|
         add_to_cohort(user, cohort)
-      end
+      end if permissions[:cohort].present?
 
       #set_subscription_permissions(user, permissions[:has_active_subscription])
     end
