@@ -40,7 +40,7 @@ class LearnAuthenticator < ::Auth::OAuth2Authenticator
       # DISABLE IF SUBSCRIPTION INVALID
 
       # SYNC WITH COHORT
-      params[:cohort].split(',').each do |cohort|
+      permissions[:cohort].split(',').each do |cohort|
         add_to_cohort(user, cohort)
       end
 
