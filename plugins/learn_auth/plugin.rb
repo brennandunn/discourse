@@ -50,9 +50,12 @@ class LearnAuthenticator < ::Auth::OAuth2Authenticator
 
   def add_to_cohort(user, cohort)
     if cohort.present?
-      group = Group.lookup_group(cohort)
-      if group and group.group_users.where(user_id: user.id).blank?
-        group.add(user)
+      begin
+        group = Group.lookup_group(cohort)
+        if group and group.group_users.where(user_id: user.id).blank?
+          group.add(user)
+        end
+      rescue
       end
     end
   end
